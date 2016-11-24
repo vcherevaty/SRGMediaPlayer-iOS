@@ -163,8 +163,27 @@ static NSString *RTSTimeSliderFormatter(NSTimeInterval seconds)
 	AVPlayerItem *playerItem = self.mediaPlayerController.playerItem;
 	if (! playerItem || self.mediaPlayerController.playbackState == RTSMediaPlaybackStateIdle || self.mediaPlayerController.playbackState == RTSMediaPlaybackStateEnded
 			|| playerItem.status != AVPlayerItemStatusReadyToPlay) {
-		self.valueLabel.text = @"--:--";
-		self.timeLeftValueLabel.text = @"--:--";
+
+//FIX->
+//		self.valueLabel.text = @"--:--";
+//		self.timeLeftValueLabel.text = @"--:--";
+        
+        if(playerItem && CMTIME_IS_VALID(playerItem.duration)){
+            
+              float duration  = CMTimeGetSeconds(playerItem.duration);
+            
+              self.valueLabel.text = RTSTimeSliderFormatter(0);
+              self.timeLeftValueLabel.text = RTSTimeSliderFormatter(-duration);
+        
+        } else {
+        
+            self.valueLabel.text = @"--:--";
+            self.timeLeftValueLabel.text = @"--:--";
+
+        }
+//FIX<-
+
+
 		return;
 	}
 	
