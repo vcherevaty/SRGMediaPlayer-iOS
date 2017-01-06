@@ -219,8 +219,8 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 	TKEvent *play = [TKEvent eventWithName:@"Play" transitioningFromStates:@[ ready, paused, stalled, ended, seeking ] toState:playing];
 	TKEvent *seek = [TKEvent eventWithName:@"Seek" transitioningFromStates:@[ ready, paused, stalled, ended, playing ] toState:seeking]; // Including 'Stalled"?
 	TKEvent *pause = [TKEvent eventWithName:@"Pause" transitioningFromStates:@[ ready, playing, seeking ] toState:paused];
-	TKEvent *end = [TKEvent eventWithName:@"End" transitioningFromStates:@[ playing ] toState:ended];
-	TKEvent *stall = [TKEvent eventWithName:@"Stall" transitioningFromStates:@[ playing ] toState:stalled];
+	TKEvent *end = [TKEvent eventWithName:@"End" transitioningFromStates:@[ playing, seeking, ended ] toState:ended];
+	TKEvent *stall = [TKEvent eventWithName:@"Stall" transitioningFromStates:@[ playing, ready ] toState:stalled];
     NSMutableSet *allStatesButIdle = [NSMutableSet setWithSet:stateMachine.states];
     [allStatesButIdle removeObject:idle];
     TKEvent *reset = [TKEvent eventWithName:@"Reset" transitioningFromStates:[allStatesButIdle allObjects] toState:idle];
