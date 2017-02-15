@@ -9,6 +9,16 @@
 #import "RTSMediaPlayerController.h"
 #import "RTSMediaPlayerIconTemplate.h"
 
+#import "RTSMediaPlayerLogger+Private.h"
+
+#define MIN_TIME_INTERVAL_BETWEEN_BUTTON_PRESSES 0.5
+
+@interface RTSMediaPlayerPlaybackButton()
+
+@property (nonatomic, strong) NSDate *lastButtonPressDate;
+
+@end
+
 @implementation RTSMediaPlayerPlaybackButton
 
 - (void) dealloc
@@ -46,14 +56,35 @@
         || self.behavior == RTSMediaPlayerPlaybackButtonBehaviorStopForAll;
 }
 
+//don't allow user to press button too quickly, because it leads to issues...
+-(BOOL)checkIfUserCanPressButton
+{
+    BOOL res = NO;
+    NSDate *currentDate = [NSDate date];
+    if (self.lastButtonPressDate == nil || [currentDate timeIntervalSinceDate:self.lastButtonPressDate] > MIN_TIME_INTERVAL_BETWEEN_BUTTON_PRESSES) {
+        self.lastButtonPressDate = currentDate;
+        res = YES;
+    }
+    
+    return res;
+}
+
 - (void)play
 {
+    if ([self checkIfUserCanPressButton] == NO) {
+        return;
+    }
+    
 	[self.mediaPlayerController play];
 	[self refreshButton];
 }
 
 - (void)pause
 {
+    if ([self checkIfUserCanPressButton] == NO) {
+        return;
+    }
+    
 	if ([self hasStopButton]) {
 		[self.mediaPlayerController reset];
 	}
