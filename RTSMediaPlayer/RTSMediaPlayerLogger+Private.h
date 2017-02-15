@@ -43,7 +43,19 @@ extern Class RTSMediaPlayerLogClass(void);
  */
 #define RTSMediaPlayerLogError(format, ...)   RTSMediaPlayerLog(DDLogFlagError,   format, ##__VA_ARGS__)
 #define RTSMediaPlayerLogWarning(format, ...) RTSMediaPlayerLog(DDLogFlagWarning, format, ##__VA_ARGS__)
+
+#if RTS_I_WANT_VERBOSE_LOGGING
+
 #define RTSMediaPlayerLogInfo(format, ...)    RTSMediaPlayerLog(DDLogFlagInfo,    format, ##__VA_ARGS__)
 #define RTSMediaPlayerLogDebug(format, ...)   RTSMediaPlayerLog(DDLogFlagDebug,   format, ##__VA_ARGS__)
 #define RTSMediaPlayerLogVerbose(format, ...) RTSMediaPlayerLog(DDLogFlagVerbose, format, ##__VA_ARGS__)
 #define RTSMediaPlayerLogTrace(format, ...)   RTSMediaPlayerLog(DDLogFlagTrace,   format, ##__VA_ARGS__)
+
+#else 
+
+#define RTSMediaPlayerLogInfo(format, ...)
+#define RTSMediaPlayerLogDebug(format, ...)
+#define RTSMediaPlayerLogVerbose(format, ...)
+#define RTSMediaPlayerLogTrace(format, ...)   
+
+#endif

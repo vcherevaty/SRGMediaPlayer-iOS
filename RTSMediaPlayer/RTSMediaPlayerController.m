@@ -292,9 +292,9 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 		
 		// The player observes its "currentItem.status" keyPath, see callback in `observeValueForKeyPath:ofObject:change:context:`
 		self.player = [AVPlayer playerWithURL:contentURL];
-		self.player.muted = _muted;
-		self.player.allowsExternalPlayback = _allowsExternalPlayback;
-		self.player.usesExternalPlaybackWhileExternalScreenIsActive = _usesExternalPlaybackWhileExternalScreenIsActive;
+		self.player.muted = self.muted;
+		self.player.allowsExternalPlayback = self.allowsExternalPlayback;
+		self.player.usesExternalPlaybackWhileExternalScreenIsActive = self.usesExternalPlaybackWhileExternalScreenIsActive;
 		self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 		
 		self.playerView.player = self.player;
