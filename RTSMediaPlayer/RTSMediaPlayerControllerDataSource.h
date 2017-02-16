@@ -28,4 +28,8 @@
 		  completionHandler:(void (^)(NSString *identifier, NSURL *contentURL, NSError *error))completionHandler;
 - (void)cancelContentURLRequest:(id)request;
 
+@optional
+
+- (BOOL)mediaPlayerControllerShouldPlay:(RTSMediaPlayerController *)mediaPlayerController;
+
 @end

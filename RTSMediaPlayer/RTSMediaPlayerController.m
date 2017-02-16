@@ -156,6 +156,7 @@ NSString * const RTSMediaPlayerPlaybackSeekingUponBlockingReasonInfoKey = @"Bloc
 	[_view removeFromSuperview];
 	[_activityView removeGestureRecognizer:_activityGestureRecognizer];
 	
+    [self.player cancelPendingPrerolls];
 	self.player = nil;
 }
 
@@ -414,6 +415,13 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 		[self loadPlayerAndAutoStartAtTime:[NSValue valueWithCMTime:kCMTimeZero]];
 	}
 	else {
+        
+        if ([self.dataSource respondsToSelector:@selector(mediaPlayerControllerShouldPlay:)]) {
+            if([self.dataSource mediaPlayerControllerShouldPlay:self] == NO){
+                return;
+            }
+        }
+        
 		[self.player play];
 	}
 }
@@ -892,10 +900,12 @@ static const void * const AVPlayerItemBufferEmptyContext = &AVPlayerItemBufferEm
 					}
 					else {
 						// Not using [self seek...] to avoid triggering undesirable state events.
+                        @weakify(self);
 						[self.player seekToTime:[self.startTimeValue CMTimeValue]
 								toleranceBefore:kCMTimeZero
 								 toleranceAfter:kCMTimeZero
 							  completionHandler:^(BOOL finished) {
+                                  @strongify(self)
 								  if (finished) {
 									  [self play];
 								  }
@@ -938,7 +948,10 @@ static const void * const AVPlayerItemBufferEmptyContext = &AVPlayerItemBufferEm
 		
 		CMTimeRange timerange = [timeRanges.firstObject CMTimeRangeValue]; // Yes, subscripting with [0] may lead to a crash??
 		if (CMTimeGetSeconds(timerange.duration) >= bufferMinDuration && self.player.rate == 0) {
+            
+            @weakify(self)
 			[self.player prerollAtRate:0.0 completionHandler:^(BOOL finished) {
+                @strongify(self)
 				if (self.pauseScheduled) {
 					self.pauseScheduled = NO;
 					[self fireEvent:self.pauseEvent userInfo:nil];
