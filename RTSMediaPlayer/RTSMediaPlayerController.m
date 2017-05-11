@@ -221,7 +221,7 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 	TKEvent *seek = [TKEvent eventWithName:@"Seek" transitioningFromStates:@[ ready, paused, stalled, ended, playing ] toState:seeking]; // Including 'Stalled"?
 	TKEvent *pause = [TKEvent eventWithName:@"Pause" transitioningFromStates:@[ ready, playing, seeking ] toState:paused];
 	TKEvent *end = [TKEvent eventWithName:@"End" transitioningFromStates:@[ playing, seeking, ended ] toState:ended];
-	TKEvent *stall = [TKEvent eventWithName:@"Stall" transitioningFromStates:@[ playing, ready ] toState:stalled];
+	TKEvent *stall = [TKEvent eventWithName:@"Stall" transitioningFromStates:@[ playing, ready, seeking] toState:stalled];
     NSMutableSet *allStatesButIdle = [NSMutableSet setWithSet:stateMachine.states];
     [allStatesButIdle removeObject:idle];
     TKEvent *reset = [TKEvent eventWithName:@"Reset" transitioningFromStates:[allStatesButIdle allObjects] toState:idle];
@@ -812,7 +812,7 @@ static const void * const AVPlayerItemBufferEmptyContext = &AVPlayerItemBufferEm
 		if (CMTIME_IS_VALID(self.previousPlaybackTime) &&
 			(CMTIME_COMPARE_INLINE(self.previousPlaybackTime, >, playbackTime)))
 		{
-			if (![self.stateMachine.currentState isEqual:self.playingState]) {
+			if (![self.stateMachine.currentState isEqual:self.playingState] && ![self.stateMachine.currentState isEqual:self.endedState]) {
 				[self fireEvent:self.playEvent userInfo:nil];
 			}
 		}

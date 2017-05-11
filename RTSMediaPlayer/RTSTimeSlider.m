@@ -389,7 +389,13 @@ static NSString *RTSTimeSliderFormatter(NSTimeInterval seconds)
 				CMTimeRange timeRange = [self.mediaPlayerController timeRange];
                 if (self.mediaPlayerController.streamType == RTSMediaStreamTypeOnDemand
                         && (self.mediaPlayerController.playbackState == RTSMediaPlaybackStateIdle || self.mediaPlayerController.playbackState == RTSMediaPlaybackStateEnded)) {
-                    self.maximumValue = 0.f;
+
+                    if(!CMTIMERANGE_IS_EMPTY(timeRange) && !CMTIMERANGE_IS_INDEFINITE(timeRange) && !CMTIMERANGE_IS_INVALID(timeRange)){
+                        self.maximumValue = CMTimeGetSeconds(timeRange.duration);
+                    } else {
+                        self.maximumValue = 0.f;
+                    }
+                    
                     self.value = 0.f;
                     self.userInteractionEnabled = YES;
                 }
